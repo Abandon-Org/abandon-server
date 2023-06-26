@@ -27,6 +27,11 @@ class AbandonConfig(object):
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://{}:{}@{}:{}/{}'.format(
         MYSQL_USER, parse.quote_plus(MYSQL_PASSWD), MYSQL_HOST, MYSQL_PORT, MYSQL_DB)
 
+    # JWT配置信息
+    EXPIRED_HOUR: int = 1   # 失效时间，单位小时
+    JWT_KEY: str = 'AbandonToken'
+    JWT_SALT: str = 'Abandon'
+
 
 if __name__ == '__main__':
     print(AbandonConfig.LOG_ROTATE)
