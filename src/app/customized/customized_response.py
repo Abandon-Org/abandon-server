@@ -14,11 +14,26 @@ class AbandonJSONResponse(JSONResponse):
     定义一个继承自 JSONResponse 的类，用于自定义响应
     """
 
-    # @staticmethod  # 静态方法装饰器，用于声明 success 方法为类方法，而不是对象方法
-    # def success(data=None, code=CustomCode.SUCCESS, msg=CustomMessage.SUCCESS, timestamp=int(time.time()), exclude=()):
-    #     # 定义 success 方法，接受三个参数，data 表示要返回的数据，code 表示响应码，msg 表示响应信息
-    #     return AbandonJSONResponse.encode_json(dict(code=code, msg=msg, data=data, timestamp=timestamp), *exclude)
-    #     # 返回一个 JSONResponse 对象，其中包含响应码、响应信息、数据和时间戳
+    @staticmethod
+    def model_to_dict(obj, *ignore: str):
+        if getattr(obj, '__table__', None) is None:
+            return obj
+        data = dict()
+        for c in obj.__table__.columns:
+            if c.name in ignore:
+                # 如果字段忽略, 则不进行转换
+                continue
+            val = getattr(obj, c.name)
+            if isinstance(val, datetime):
+                data[c.name] = val.strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                data[c.name] = val
+        return data
+
+    @staticmethod
+    def failed(msg, code=CustomCode.REGISTER_FAILED, data=None):
+        return dict(code=code, msg=str(msg), data=data)
+
     @staticmethod
     def success(data=None, code=CustomCode.SUCCESS, msg=CustomMessage.SUCCESS, timestamp=int(time.time()), exclude=()):
         return AbandonJSONResponse.encode_json(dict(code=code, msg=msg, data=data, timestamp=timestamp), *exclude)
@@ -31,4 +46,5 @@ class AbandonJSONResponse(JSONResponse):
 
 
 if __name__ == '__main__':
-    print(AbandonJSONResponse.encode_json({'code': 200, 'msg': 'Operation successful!', 'data': '2222', 'timestamp': 1687251482}))
+    print(AbandonJSONResponse.encode_json(
+        {'code': 200, 'msg': 'Operation successful!', 'data': '2222', 'timestamp': 1687251482}))
