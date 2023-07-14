@@ -25,8 +25,6 @@ class AbandonBase(Base):
         self.updated_at = datetime.now()
         self.create_user = user
         self.update_user = user
-        self.deleted_at = 0
-        # self.id = id
 
     def serialize(self, *ignore):
         """

@@ -16,18 +16,29 @@ class AbandonJSONResponse(JSONResponse):
 
     @staticmethod
     def model_to_dict(obj, *ignore: str):
+        """
+        将数据库模型对象转换为字典形式
+        :param obj: 数据库模型对象
+        :param ignore: 要忽略的属性名称列表
+        :return: 字典形式的数据
+        """
         if getattr(obj, '__table__', None) is None:
+            # 检查对象是否是一个数据库模型对象，如果不是，直接返回对象本身
             return obj
+
         data = dict()
         for c in obj.__table__.columns:
             if c.name in ignore:
-                # 如果字段忽略, 则不进行转换
+                # 如果属性名在要忽略的属性列表中，则不进行转换
                 continue
             val = getattr(obj, c.name)
             if isinstance(val, datetime):
+                # 如果属性值是datetime类型，则将属性值转换为指定格式的字符串
                 data[c.name] = val.strftime("%Y-%m-%d %H:%M:%S")
             else:
+                # 否则，直接使用属性值
                 data[c.name] = val
+
         return data
 
     @staticmethod

@@ -1,8 +1,5 @@
-import asyncio
-import json
 import time
 from collections.abc import Iterable
-from copy import deepcopy
 from datetime import datetime
 from typing import Tuple, List, TypeVar, Any, Callable
 
@@ -10,7 +7,6 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.models.basic import AbandonBase
-from src.app.utils.log_config import logger
 
 
 class Mapper(object):

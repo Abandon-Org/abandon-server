@@ -25,9 +25,8 @@ class AbandonConfig(object):
 
     # sqlalchemy，此处采用parse是因为如果你的密码包含特殊字符，如@:等，会有识别冲突，因此使用parse
     SQLALCHEMY_DATABASE_URI: str = f'mysql+mysqlconnector://{MYSQL_USER}:{parse.quote_plus(MYSQL_PASSWD)}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}'
-    # 异步URI
-    ASYNC_SQLALCHEMY_URI: str = f'mysql+aiomysql://{MYSQL_USER}:{parse.quote_plus(MYSQL_PASSWD)}' \
-                                f'@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}'
+    # 异步数据库操作配置
+    ASYNC_SQLALCHEMY_URI: str = f'mysql+aiomysql://{MYSQL_USER}:{parse.quote_plus(MYSQL_PASSWD)}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT配置信息

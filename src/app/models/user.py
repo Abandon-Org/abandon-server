@@ -33,7 +33,7 @@ class User(Base):
     # 管理员可以禁用某个用户，当他离职后
     is_valid = Column(Boolean, nullable=False, default=True, comment="是否合法")
 
-    def __init__(self, username, name, password, email):
+    def __init__(self, username, name, password, email, is_valid=True):
         self.username = username
         self.password = password
         self.email = email
@@ -41,3 +41,4 @@ class User(Base):
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         self.role = 0
+        self.is_valid = is_valid
