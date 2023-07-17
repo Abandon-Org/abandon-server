@@ -57,6 +57,6 @@ async def query_user_info(token: str):
         if user is None:
             return AbandonJSONResponse.failed("用户不存在")
         return AbandonJSONResponse.success(
-            dict(token=token, expire=("password",), usr_info=AbandonJSONResponse.model_to_dict(user, "password")))
+            dict(token=token, usr_info=AbandonJSONResponse.model_to_dict(user, "password")))
     except Exception as e:
         return AbandonJSONResponse.failed(e)
