@@ -47,7 +47,7 @@ class AsyncRequest(object):
     async def client(url: str, timeout=15, **kwargs):
         if not url.startswith(("http://", "https://")):
             raise Exception("请输入正确的url, 记得带上http哦")
-        headers = kwargs.get("headers", {})
+        headers = kwargs.get("headers")
         body = kwargs.get("body", {})
         if body is None:
             r = AsyncRequest(url, headers=headers, timeout=timeout)
@@ -58,7 +58,7 @@ class AsyncRequest(object):
                 headers['Content-Type'] = "application/json; charset=UTF-8"
             try:
                 body_data = body["body"]
-                body_data = json.loads(body_data)
+                body_data = json.loads(json.dumps(body_data))
             except json.JSONDecodeError as e:
                 raise Exception(f"json格式不正确: {e}")
             r = AsyncRequest(url, headers=headers, timeout=timeout,

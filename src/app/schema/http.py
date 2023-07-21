@@ -11,7 +11,7 @@ class HttpRequestForm(BaseModel):
     url: str
     body: Optional[Union[dict, list]] = None
     # body样式为：{"body": "xx", "body_type": "json"}
-    headers: Optional[dict] = None
+    headers: Optional[dict] = {}
 
     @validator('method', 'url')
     def name_not_empty(cls, v):
