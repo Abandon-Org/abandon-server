@@ -3,6 +3,7 @@ import time
 
 import aiohttp
 from aiohttp import FormData
+from fastapi import Body
 
 
 class AsyncRequest(object):
@@ -48,8 +49,9 @@ class AsyncRequest(object):
             raise Exception("请输入正确的url, 记得带上http哦")
         headers = kwargs.get("headers", {})
         body = kwargs.get("body", {})
-        print(body, type(body))
-        if body["body_type"] == "none":
+        if body is None:
+            r = AsyncRequest(url, headers=headers, timeout=timeout)
+        elif body["body_type"] == "none":
             r = AsyncRequest(url, headers=headers, timeout=timeout)
         elif body["body_type"] == "json":
             if "Content-Type" not in headers:

@@ -9,9 +9,9 @@ from src.app.exception.error import ParamsError
 class HttpRequestForm(BaseModel):
     method: str
     url: str
-    body: Optional[Union[dict, str]] = Body(None),
+    body: Optional[Union[dict, list]] = None
     # body样式为：{"body": "xx", "body_type": "json"}
-    headers: Optional[dict]
+    headers: Optional[dict] = None
 
     @validator('method', 'url')
     def name_not_empty(cls, v):

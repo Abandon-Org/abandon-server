@@ -23,3 +23,8 @@ async def http_request(data: HttpRequestForm):
     #     return PityResponse.failed(response.get("msg"), data=response)
     # except Exception as e:
     #     return PityResponse.failed(e)
+
+
+@router.post("/postnone")
+async def post_none():
+    return AbandonJSONResponse.success('11111')
