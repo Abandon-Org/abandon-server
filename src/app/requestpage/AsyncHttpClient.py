@@ -1,5 +1,6 @@
 import json
 import time
+from urllib.parse import urlencode
 
 import aiohttp
 from aiohttp import FormData
@@ -63,30 +64,41 @@ class AsyncRequest(object):
                 raise Exception(f"json格式不正确: {e}")
             r = AsyncRequest(url, headers=headers, timeout=timeout,
                              json=body_data)
+            # # 判断body类型是否为formdata
+            # if body and isinstance(body, dict) and body.get("body_type") == "formdata":
+            #     try:
+            #         form_data = FormData()
+            #         items = body.get("body", [])
+            #         for item in items:
+            #             # 如果是文本类型，直接添加key-value
+            #             if item.get("type") == 'TEXT':
+            #                 form_data.add_field(item.get("key"), item.get("value", ''))
+            #             else:
+            #                 # 其他类型处理方式，你可以根据需要进行修改
+            #                 pass
+            #         r = await AsyncRequest(method, url, headers=headers, data=form_data, timeout=timeout)
+            #     except Exception as e:
+            #         raise Exception(f"解析form-data失败: {str(e)}")
         elif body["body_type"] == "formdata":
             try:
-                body_data = body["body"]
-                form_data = None
-                if body:
-                    form_data = FormData()
-                    # 因为存储的是字符串，所以需要反序列化
-                    items = json.loads(body_data)
-                    print(items)
-                    # for item in items:
-                    #     # 如果是文本类型，直接添加key-value
-                    #     if item.get("type") == 'TEXT':
-                    #         form_data.add_field(item.get("key"), item.get("value", ''))
-                    #     else:
-                    #         client = OssClient.get_oss_client()
-                    #         file_object = await client.get_file_object(item.get("value"))
-                    #         form_data.add_field(item.get("key"), file_object)
+                body_data = body.get("body", [])
+                form_data = FormData()
+                for item in body_data:
+                    # 如果是文本类型，直接添加key-value
+                    if item.get("type") == 'TEXT':
+                        form_data.add_field(item.get("key"), item.get("value", ''))
+                    # todo 后期可能会改写add_file方法，暂时先注释掉基础写法
+                    # else:
+                    #     # 如果是文件类型，使用add_file方法添加文件
+                    #     file_content = await file.read()
+                    #     form_data.add_file(item.get("key"), file_content, filename=item.get("value"))
                 r = AsyncRequest(url, headers=headers, data=form_data, timeout=timeout)
             except Exception as e:
                 raise Exception(f"解析form-data失败: {str(e)}")
-        elif body["bode_type"] == "xform":
-            body = kwargs.get("body", "{}")
-            body_data = json.loads(body)
-            r = AsyncRequest(url, headers=headers, data=body_data, timeout=timeout)
+        elif body["body_type"] == "xform":
+            body_data = kwargs.get("body", "{}")
+            body_encoded = urlencode(body_data)
+            r = AsyncRequest(url, headers=headers, data=body_encoded, timeout=timeout)
         else:
             # 暂时未支持其他类型
             r = AsyncRequest(url, headers=headers, timeout=timeout, data=kwargs.get("body", {})["body"])
