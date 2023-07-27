@@ -30,7 +30,7 @@ class AbandonConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT配置信息
-    EXPIRED_HOUR: int = 1  # 失效时间，单位小时
+    EXPIRED_HOUR: int = 12  # 失效时间，单位小时
     JWT_KEY: str = 'AbandonToken'
     JWT_SALT: str = 'Abandon'
 
