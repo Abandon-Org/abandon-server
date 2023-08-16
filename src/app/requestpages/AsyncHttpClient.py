@@ -75,8 +75,6 @@ class AsyncRequest(object):
                 headers['Content-Type'] = "application/json; charset=UTF-8"
             try:
                 body = kwargs.get("body")
-                if body:
-                    body = json.loads(body)
             except json.JSONDecodeError as e:
                 raise Exception(f"json格式不正确: {e}")
             r = AsyncRequest(url, headers=headers, timeout=timeout,
@@ -87,9 +85,7 @@ class AsyncRequest(object):
                 form_data = None
                 if body:
                     form_data = FormData()
-                    # 因为存储的是字符串，所以需要反序列化
-                    items = json.loads(body)
-                    for item in items:
+                    for item in body:
                         # 如果是文本类型，直接添加key-value
                         if item.get("type") == 'TEXT':
                             form_data.add_field(item.get("key"), item.get("value", ''))
@@ -101,9 +97,15 @@ class AsyncRequest(object):
                 r = AsyncRequest(url, headers=headers, data=form_data, timeout=timeout)
             except Exception as e:
                 raise Exception(f"解析form-data失败: {str(e)}")
-        elif body_type == "xform":
-            body_data = kwargs.get("body", "{}")
-            body_encoded = urlencode(body_data)
+        elif body_type == "x-www-form-urlencoded":
+            body_data = kwargs.get("body")  # 从参数中获取body数据，格式为键值对的列表
+            data_dict = {}  # 创建一个空的字典，用于存储键值对
+            for item in body_data:
+                key = item.get("key")  # 获取键
+                value = item.get("value")  # 获取值
+                if key is not None and value is not None:
+                    data_dict[key] = value  # 将键值对添加到字典中
+            body_encoded = urlencode(data_dict)  # 使用urlencode编码字典数据
             r = AsyncRequest(url, headers=headers, data=body_encoded, timeout=timeout)
         else:
             # 暂时未支持其他类型
