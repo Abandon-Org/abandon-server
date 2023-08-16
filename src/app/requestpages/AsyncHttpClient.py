@@ -70,7 +70,7 @@ class AsyncRequest(object):
             r = AsyncRequest(url, headers=headers, timeout=timeout)
         elif body_type == "none":
             r = AsyncRequest(url, headers=headers, timeout=timeout)
-        elif body_type == "json":
+        elif body_type == "raw":
             if "Content-Type" not in headers:
                 headers['Content-Type'] = "application/json; charset=UTF-8"
             try:
