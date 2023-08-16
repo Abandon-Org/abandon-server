@@ -10,6 +10,7 @@ class HttpRequestForm(BaseModel):
     url: str
     # 定义HTTP请求的请求体，可以是字典或列表类型，可选参数，默认为None
     body: Optional[Union[dict, list]] = None
+    body_type: str
     # 定义HTTP请求的请求头，可以是字典类型，可选参数，默认为一个空字典
     headers: Optional[dict] = {}
 

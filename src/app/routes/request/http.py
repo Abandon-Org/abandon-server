@@ -10,7 +10,7 @@ router = APIRouter(prefix="/request")
 @router.post("/http")
 async def http_request(data: HttpRequestForm):
     try:
-        r = await AsyncRequest.client(data.url, headers=data.headers, body=data.body)
+        r = await AsyncRequest.client(data.url, data.body_type, headers=data.headers, body=data.body)
         response = await r.invoke(data.method)
         return AbandonJSONResponse.success(response)
     except Exception as e:

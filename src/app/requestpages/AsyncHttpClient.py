@@ -53,9 +53,10 @@ class AsyncRequest(object):
                                           cookies=cookie, json_format=json_format)
 
     @staticmethod
-    async def client(url: str, timeout=15, **kwargs):
+    async def client(url: str, body_type: str, timeout=15, **kwargs):
         """
         用于创建AsyncRequest对象并返回
+        :param body_type:
         :param url: str
         :param timeout: int
         :param kwargs:
@@ -67,35 +68,40 @@ class AsyncRequest(object):
         body = kwargs.get("body", {})
         if body is None:
             r = AsyncRequest(url, headers=headers, timeout=timeout)
-        elif body.get("body_type") == "none":
+        elif body_type == "none":
             r = AsyncRequest(url, headers=headers, timeout=timeout)
-        elif body.get("body_type") == "json":
+        elif body_type == "json":
             if "Content-Type" not in headers:
                 headers['Content-Type'] = "application/json; charset=UTF-8"
             try:
-                body_data = body["body"]
-                body_data = json.loads(json.dumps(body_data))
+                body = kwargs.get("body")
+                if body:
+                    body = json.loads(body)
             except json.JSONDecodeError as e:
                 raise Exception(f"json格式不正确: {e}")
             r = AsyncRequest(url, headers=headers, timeout=timeout,
-                             json=body_data)
-        elif body.get("body_type") == "formdata":
+                             json=body)
+        elif body_type == "form-data":
             try:
-                body_data = body.get("body", [])
-                form_data = FormData()
-                for item in body_data:
-                    # 如果是文本类型，直接添加key-value
-                    if item.get("type") == 'TEXT':
-                        form_data.add_field(item.get("key"), item.get("value", ''))
-                    # todo 后期可能会改写add_file方法，暂时先注释掉基础写法
-                    # else:
-                    #     # 如果是文件类型，使用add_file方法添加文件
-                    #     file_content = await file.read()
-                    #     form_data.add_file(item.get("key"), file_content, filename=item.get("value"))
+                body = kwargs.get("body")
+                form_data = None
+                if body:
+                    form_data = FormData()
+                    # 因为存储的是字符串，所以需要反序列化
+                    items = json.loads(body)
+                    for item in items:
+                        # 如果是文本类型，直接添加key-value
+                        if item.get("type") == 'TEXT':
+                            form_data.add_field(item.get("key"), item.get("value", ''))
+                        else:
+                            pass
+                            # client = OssClient.get_oss_client()
+                            # file_object = await client.get_file_object(item.get("value"))
+                            # form_data.add_field(item.get("key"), file_object)
                 r = AsyncRequest(url, headers=headers, data=form_data, timeout=timeout)
             except Exception as e:
                 raise Exception(f"解析form-data失败: {str(e)}")
-        elif body["body_type"] == "xform":
+        elif body_type == "xform":
             body_data = kwargs.get("body", "{}")
             body_encoded = urlencode(body_data)
             r = AsyncRequest(url, headers=headers, data=body_encoded, timeout=timeout)
