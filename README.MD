@@ -10,8 +10,6 @@
 - [x]  Mysql
 - [x]  asyncio
 - [x]  Gunicorn
-- [x]  React.ts
-- [x]  Umi
 
 
 ### ⚽ 前端地址
