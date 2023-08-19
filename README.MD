@@ -16,7 +16,7 @@
 
 ### ⚽ 前端地址
 
-  [前端地址](https://github.com/Abandon-Org/abandon-server)
+  [前端地址](https://github.com/Abandon-Org/abandon-web)
 
 
 ## ☕ 说明
