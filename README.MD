@@ -7,7 +7,7 @@
 
 - [x]  FastApi
 - [x]  SQLAlchemy
-- [x]  Redis
+- [x]  Mysql
 - [x]  asyncio
 - [x]  Gunicorn
 - [x]  React.ts
