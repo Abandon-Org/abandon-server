@@ -22,8 +22,9 @@ class UserDto(BaseModel):
     password: str
     username: str
     email: str
+    role: int = 0
 
-    @validator('name', 'password', 'username', 'email')
+    @validator('name', 'password', 'username', 'role', 'email')
     def field_not_empty(cls, v):
         if isinstance(v, str) and len(v.strip()) == 0:
             raise ParamsError("不能为空")

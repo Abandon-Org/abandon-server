@@ -35,5 +35,14 @@ class AbandonConfig(object):
     JWT_SALT: str = 'Abandon'
 
 
+class AdminConfig(object):
+    # 初始化最高用户配置信息
+    USERNAME: str = 'admin'
+    NAME: str = 'admin'
+    PASSWORD: str = 'admin'
+    EMAIL: str = 'admin@admin.com'
+    PHONE: str = ''
+
+
 if __name__ == '__main__':
     print(AbandonConfig.LOG_ROTATE)

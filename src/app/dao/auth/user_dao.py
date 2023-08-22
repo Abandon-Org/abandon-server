@@ -13,12 +13,13 @@ from src.app.models import async_session  # 导入async_session，用于操作�
 class UserDao(Mapper):  # 定义名为UserDao的类，继承自Mapper类
 
     @staticmethod
-    async def register_user(username: str, name: str, password: str, email: str):
+    async def register_user(username: str, name: str, password: str, role: int, email: str):
         """
         注册用户
         :param username: 用户名
         :param name: 姓名
         :param password: 密码
+        :param role: 权限
         :param email: 邮箱
         :return: 用户对象
         """
@@ -34,7 +35,7 @@ class UserDao(Mapper):  # 定义名为UserDao的类，继承自Mapper类
                         raise Exception("用户名或邮箱已存在")
                     # 注册时给密码加盐
                     pwd = AbandonJWT.add_salt(password)
-                    user = User(username, name, pwd, email)
+                    user = User(username, name, pwd, email, role)
                     user.last_login_at = datetime.now()
                     session.add(user)
                     await session.flush()
