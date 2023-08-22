@@ -41,7 +41,6 @@ class AdminConfig(object):
     NAME: str = 'admin'
     PASSWORD: str = 'admin'
     EMAIL: str = 'admin@admin.com'
-    PHONE: str = ''
 
 
 if __name__ == '__main__':

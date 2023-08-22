@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 
 from loguru import logger
@@ -16,10 +17,9 @@ async def init_user():
     username = AdminConfig.USERNAME
     name = AdminConfig.NAME
     password = AdminConfig.PASSWORD
-    email = AdminConfig.EMAIL
-    username = AdminConfig.USERNAME
-    phone = AdminConfig.PHONE
     role = 2
+    email = AdminConfig.EMAIL
+
     try:
         # 采用aiomysql异步操作数据库
         async with async_session() as session:
@@ -29,21 +29,27 @@ async def init_user():
                     select(User).where(or_(User.username == username, User.email == email)))
                 counts = await session.execute(select(func.count(User.id)))
                 if users.scalars().first():
-                    raise Exception("用户名或邮箱已存在")
+                    logger.info("admin用户已存在")
+                    return True
                 # 注册时给密码加盐
                 pwd = AbandonJWT.add_salt(password)
-                user = User(username, name, pwd, email, phone, role)
+                user = User(username, name, pwd, email, role)
                 user.last_login_at = datetime.now()
                 session.add(user)
                 await session.flush()
                 session.expunge(user)
-                return user  # 返回注册成功的用户对象
+                return True
     except Exception as e:
-        logger.error(f"用户注册失败: {str(e)}")
-        raise Exception(f"注册失败: {e}")
+        logger.error(f"初始化admin用户失败: {str(e)}")
+        raise Exception(f"初始化admin用户失败: {e}")
 
 
 Base.metadata.create_all(engine)
-init_user()
 
 
+async def main():
+    await init_user()
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
