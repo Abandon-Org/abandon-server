@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, String, INT, DATETIME, Boolean
 
 from src.app.models import Base
+from src.app.utils import generate_random_string
 
 
 class User(Base):
@@ -11,6 +12,7 @@ class User(Base):
 
     id = Column(INT, primary_key=True, comment="用户唯一id")
     # 定义字段 id，类型为整数，是主键，注释为 "用户唯一id"
+    user_id = Column(String(32), unique=True, comment="用户唯一user_id")
     username = Column(String(16), unique=True, index=True, comment="用户名")
     # 定义字段 username，类型为字符串，长度为 16，唯一且建立索引，注释为 "用户名"
     name = Column(String(16), index=True, comment="姓名")
@@ -34,6 +36,7 @@ class User(Base):
     is_valid = Column(Boolean, nullable=False, default=True, comment="是否合法")
 
     def __init__(self, username, name, password, email, role=0, is_valid=True):
+        self.user_id = generate_random_string()
         self.username = username
         self.password = password
         self.email = email
